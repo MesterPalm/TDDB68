@@ -5,6 +5,8 @@
 #include <list.h>
 #include <stdint.h>
 
+#define MAX_FD 130
+
 /* States in a thread's life cycle. */
 enum thread_status
   {
@@ -29,9 +31,7 @@ typedef int tid_t;
    Each thread structure is stored in its own 4 kB page.  The
    thread structure itself sits at the very bottom of the page
    (at offset 0).  The rest of the page is reserved for the
-   thread's kernel stack, which grows downward from the top of
-   the page (at offset 4 kB).  Here's an illustration:
-
+   thread's MAX_FD 130
         4 kB +---------------------------------+
              |          kernel stack           |
              |                |                |
@@ -88,9 +88,12 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
+    struct file *f_container[MAX_FD];
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+    struct list_elem sleep_elem;
+    uint32_t tick;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
