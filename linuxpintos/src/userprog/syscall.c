@@ -64,7 +64,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_EXIT:
       exit(f);
       break;
-      
+
     default:
       printf("default\n");
       break;
@@ -212,4 +212,9 @@ void read(struct intr_frame *f){
 void exit(struct intr_frame *f){
   int status = *((int*)(f->esp+4));
   thread_exit();
+}
+
+void exec(struct intr_frame *f){
+  char *filename = *((char**)(f->esp+4));
+  process_execute(filename)
 }
